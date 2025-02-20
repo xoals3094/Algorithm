@@ -10,17 +10,28 @@ for _ in range(E):
     graph[b - 1].append((a - 1, c))
 
 
-def dijkstra(start, end) -> int:
-    dk = [INF for _ in range(N)]
-    dk[start] = 0
-    q = [start]
-    while len(q) > 0:
-        node = q.pop(0)
-        for next, distance in graph[node]:
-            if dk[node] + distance < dk[next]:
-                dk[next] = dk[node] + distance
-                q.append(next)
-    return dk[end]
+def get_smallest(visited, distance):
+    smallest_node = 0
+    smallest_cost = INF
+    for node, cost in enumerate(distance):
+        if not visited[node] and cost < smallest_cost:
+            smallest_cost = cost
+            smallest_node = node
+
+    return smallest_node
+
+def dijkstra(start, end):
+    visited = [False for _ in range(N)]
+    distance = [INF for _ in range(N)]
+    distance[start] = 0
+
+    for _ in range(N):
+        node = get_smallest(visited, distance)
+        visited[node] = True
+        for next, cost in graph[node]:
+            if distance[node] + cost < distance[next]:
+                distance[next] = distance[node] + cost
+    return distance[end]
 
 
 def get_result():
