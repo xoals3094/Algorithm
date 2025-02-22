@@ -19,7 +19,7 @@ def dijkstra(start):
 
     while q:
         weight, node = heapq.heappop(q)
-        if weight < distance[node]:
+        if weight > distance[node]:
             continue
 
         for next, weight in tree[node]:
