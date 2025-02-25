@@ -15,16 +15,11 @@ def fibonacci(n):
         return dp[n]
 
     elif n % 2 == 0:
-        a = fibonacci(n // 2)
-        b = fibonacci(n // 2 + 1)
-        c = fibonacci(n // 2 - 1)
-        dp[n] = (a * (b + c)) % mod
+        dp[n] = (fibonacci(n // 2) * (fibonacci(n // 2 + 1) + fibonacci(n // 2 - 1))) % mod
         return dp[n]
 
     elif n % 2 == 1:
-        a = fibonacci((n + 1) // 2)
-        b = fibonacci((n - 1) // 2)
-        dp[n] = (a ** 2 + b ** 2) % mod
+        dp[n] = (fibonacci((n + 1) // 2) ** 2 + fibonacci((n - 1) // 2) ** 2) % mod
         return dp[n]
 
 print(fibonacci(N))
