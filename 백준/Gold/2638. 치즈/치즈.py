@@ -16,20 +16,12 @@ grid = [list(map(int, sys.stdin.readline().strip().split())) for _ in range(N)]
 def is_valid(x, y):
     return 0 <= x < M and 0 <= y < N
 
-def is_melting(x, y, external_air):
-    count = 0
-    for vector_x, vector_y in VECTOR:
-        move_x = x + vector_x
-        move_y = y + vector_y
-        if is_valid(move_x, move_y) and external_air[move_y][move_x]:
-            count += 1
-    return count >= 2
-
 
 def bfs():
-    external_air = [[False for _ in range(M)] for _ in range(N)]
+    visited = [[0 for _ in range(M)] for _ in range(N)]
     q = deque([(0, 0)])
-    external_air[0][0] = True
+    visited[0][0] = 1
+
     while q:
         x, y = q.popleft()
         for vector_x, vector_y in VECTOR:
@@ -38,17 +30,20 @@ def bfs():
             if not is_valid(move_x, move_y):
                 continue
 
-            if not external_air[move_y][move_x] and grid[move_y][move_x] == 0:
-                external_air[move_y][move_x] = True
-                q.append((move_x, move_y))
+            if grid[y][x] == 0:
+                if visited[move_y][move_x] == 0:
+                    q.append((move_x, move_y))
+                    visited[move_y][move_x] += 1
+                else:
+                    visited[move_y][move_x] += 1
 
-    return external_air
+    return visited
 
-def melt_cheese(external_air):
+def melt_cheese(visited):
     target = []
     for y in range(N):
         for x in range(M):
-            if not external_air[y][x] and grid[y][x] == 1 and is_melting(x, y, external_air):
+            if grid[y][x] == 1 and visited[y][x] >= 2:
                 target.append((x, y))
 
     for x, y in target:
