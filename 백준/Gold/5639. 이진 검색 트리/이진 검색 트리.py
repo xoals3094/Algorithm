@@ -1,5 +1,7 @@
 import sys
-INF = int(10e7)
+sys.setrecursionlimit(10**6)
+
+INF = 10e7
 
 LEFT = 0
 RIGHT = 1
@@ -40,25 +42,13 @@ def init():
         node += 1
 
 
-
-def postorder():
-    visited = [False for _ in range(MAX)]
-
-    stack = [0]
-    while stack:
-        top = stack[-1]
-        left, right = graph[top]
-        if  (left == -1 or visited[left]) and (right == -1 or visited[right]):
-            print(values[stack.pop()])
-
-        if not visited[right] and right != -1:
-            stack.append(right)
-            visited[right] = True
-
-        if not visited[left] and left != -1:
-            stack.append(left)
-            visited[left] = True
-
+def postorder(node):
+    left, right = graph[node]
+    if left != -1:
+        postorder(left)
+    if right != -1:
+        postorder(right)
+    print(values[node])
 
 init()
-postorder()
+postorder(0)
