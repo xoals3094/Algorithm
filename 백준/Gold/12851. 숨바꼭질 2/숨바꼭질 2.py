@@ -1,53 +1,34 @@
 import sys
-import heapq
+from collections import deque
 
 INF = int(1e10)
-WEIGHT = 0
-COUNT = 1
 
 N, K = map(int, sys.stdin.readline().strip().split())
+MAX = 100_000
 
-MAX = 100_000 * 2
-
-def dijkstra(start, end):
-    distance = [[INF, 0] for _ in range(MAX + 1)]
-    distance[start][WEIGHT] = 0
-    distance[start][COUNT] = 1
-    q = [(0, start)]
-
+def bfs(start, end):
+    visited = [False for _ in range(MAX + 1)]
+    visited[start] = True
+    q = deque([(start, 0)])
+    minimum = 0
+    count = 0
     while q:
-        weight, node = heapq.heappop(q)
-        if weight > distance[node][WEIGHT]:
-            continue
+        node, weight = q.popleft()
+        if node == end and not visited[end]:
+            count += 1
+            minimum = weight
 
-        if node * 2 <= MAX and distance[node][WEIGHT] + 1 <= distance[node * 2][WEIGHT]:
-            if distance[node][WEIGHT] + 1 == distance[node * 2][WEIGHT]:
-                distance[node * 2][COUNT] += distance[node][COUNT]
-                continue
+        elif node == end and minimum == weight:
+            count += 1
 
-            distance[node * 2][WEIGHT] = distance[node][WEIGHT] + 1
-            distance[node * 2][COUNT] = distance[node][COUNT]
-            heapq.heappush(q, (distance[node * 2][WEIGHT], node * 2))
+        visited[node] = True
+        for next in [node * 2, node + 1, node - 1]:
+            if 0 <= next <= MAX and not visited[next]:
+                q.append((next, weight + 1))
 
-        if node + 1 <= MAX and distance[node][WEIGHT] + 1 <= distance[node + 1][WEIGHT]:
-            if distance[node][WEIGHT] + 1 == distance[node + 1][WEIGHT]:
-                distance[node + 1][COUNT] += distance[node][COUNT]
-                continue
 
-            distance[node + 1][WEIGHT] = distance[node][WEIGHT] + 1
-            distance[node + 1][COUNT] = distance[node][COUNT]
-            heapq.heappush(q, (distance[node + 1][WEIGHT], node + 1))
+    return minimum, count
 
-        if node - 1 >= 0 and distance[node][WEIGHT] + 1 <= distance[node - 1][WEIGHT]:
-            if distance[node][WEIGHT] + 1 == distance[node - 1][WEIGHT]:
-                distance[node - 1][COUNT] += distance[node][COUNT]
-                continue
-
-            distance[node - 1][WEIGHT] = distance[node][WEIGHT] + 1
-            distance[node - 1][COUNT] = distance[node][COUNT]
-            heapq.heappush(q, (distance[node - 1][WEIGHT], node - 1))
-
-    return distance[end][WEIGHT], distance[end][COUNT]
-
-d, c = dijkstra(N, K)
-print(d, c)
+t, cnt = bfs(N, K)
+print(t)
+print(cnt)
