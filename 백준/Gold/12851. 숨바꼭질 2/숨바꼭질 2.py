@@ -1,8 +1,6 @@
 import sys
 from collections import deque
 
-INF = int(1e10)
-
 N, K = map(int, sys.stdin.readline().strip().split())
 MAX = 100_000
 
