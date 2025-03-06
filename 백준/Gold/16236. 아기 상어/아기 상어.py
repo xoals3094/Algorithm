@@ -1,5 +1,5 @@
 import sys
-from collections import deque
+import heapq
 
 N = int(sys.stdin.readline().strip())
 
@@ -30,35 +30,15 @@ def is_valid(x, y):
     return 0 <= x < N and 0 <= y < N
 
 
-def get_best(q, x, y, t):
-    for nx, ny, nt in q:
-        if nt != t:
-            break
-
-        if not 0 < grid[ny][nx] < size:
-            continue
-
-        if ny < y:
-            x = nx
-            y = ny
-
-        elif ny == y and nx < x:
-            x = nx
-            y = ny
-
-    return x, y
-
-
 def bfs(x, y):
     global size, count, time
 
     visited = [[False for _ in range(N)] for _ in range(N)]
     visited[y][x] = True
-    q = deque([(x, y, 0)])
+    q = [(0, y, x)]
     while q:
-        x, y, t = q.popleft()
+        t, y, x = heapq.heappop(q)
         if 0 < grid[y][x] < size :
-            x, y = get_best(q, x, y, t)
             count += 1
             if count == size:
                 count = 0
@@ -71,7 +51,7 @@ def bfs(x, y):
             move_y = y + vector_y
             if is_valid(move_x, move_y) and not visited[move_y][move_x] and grid[move_y][move_x] <= size:
                 visited[move_y][move_x] = True
-                q.append((move_x, move_y, t + 1))
+                heapq.heappush(q, (t + 1, move_y, move_x))
 
     return -1, -1
 
