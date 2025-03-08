@@ -31,13 +31,12 @@ while a_idx != len(A) and b_idx != len(B):
         b_idx = 0
 
     elif A[a_idx] > B[b_idx]:
-        A[a_idx] = 0
+        A.pop(a_idx)
         a_idx = 0
 
     elif A[a_idx] < B[b_idx]:
-        B[b_idx] = 0
+        B.pop(b_idx)
         b_idx = 0
 
-result = list(filter(lambda x: x != 0, result))
 print(len(result))
 print(' '.join(list(map(str, result))))
