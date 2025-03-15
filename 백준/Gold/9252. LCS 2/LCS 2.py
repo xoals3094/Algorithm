@@ -30,5 +30,3 @@ lcs.reverse()
 print(len(lcs))
 for x in lcs:
     print(x, end='')
-
-
