@@ -1,9 +1,9 @@
 import sys
 
-MAX = 1_000_000
 
 N = int(sys.stdin.readline().strip())
 numbers = list(map(int, sys.stdin.readline().strip().split()))
+MAX = max(numbers)
 flags = [False for _ in range(MAX + 1)]
 for n in numbers:
     flags[n] = True
@@ -13,18 +13,17 @@ score = [0 for _ in range(MAX + 1)]
 def calculate_factor(n):
     _factor = []
     i = 1
-    while i * i<= n:
+    while i * i < n:
         if n % i * i == 0:
             _factor.append(i)
+            yield i
         i += 1
 
-    factor = _factor.copy()
+    if i * i == n:
+        yield i
+
     for i in _factor:
-        factor.append(n // i)
-
-    factor = list(set(factor))
-    return factor
-
+        yield n // i
 
 for n in numbers:
     for factor in calculate_factor(n):
