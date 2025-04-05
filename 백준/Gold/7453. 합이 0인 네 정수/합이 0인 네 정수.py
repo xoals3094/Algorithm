@@ -15,7 +15,7 @@ cnt = 0
 for i in range(N):
     for j in range(N):
         tmp = -(ABCD[i][C] + ABCD[j][D])
-        if tmp in left_sum.keys():
+        if tmp in left_sum:
             cnt += left_sum[tmp]
 
 print(cnt)
