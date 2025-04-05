@@ -1,27 +1,21 @@
 import sys
 from collections import defaultdict
 
-if __name__ == "__main__":
-    n = int(input())
-    left = []
-    right = []
-    
-    for i in range(n):
-        a, b, c, d = map(int, sys.stdin.readline().split())
-        left.append((a, b))
-        right.append((c, d))
+N = int(sys.stdin.readline().rstrip())
+ABCD = [list(map(int, sys.stdin.readline().rstrip().split())) for _ in range(N)]
 
-    left_dict = defaultdict(int)
-    left_dict = defaultdict(int)
-    for i in range(n):
-        for j in range(n):
-            left_dict[left[i][0] + left[j][1]] += 1
+A, B, C, D = 0, 1, 2, 3
 
-    result = 0
-    for i in range(n):
-        for j in range(n):
-            temp = (right[i][0] + right[j][1]) * -1
-            if temp in left_dict.keys():
-                result += left_dict[temp]
-        
-    print(result)
+left_sum = defaultdict(int)
+for i in range(N):
+    for j in range(N):
+        left_sum[ABCD[i][A] + ABCD[j][B]] += 1
+
+cnt = 0
+for i in range(N):
+    for j in range(N):
+        tmp = -(ABCD[i][C] + ABCD[j][D])
+        if tmp in left_sum.keys():
+            cnt += left_sum[tmp]
+
+print(cnt)
