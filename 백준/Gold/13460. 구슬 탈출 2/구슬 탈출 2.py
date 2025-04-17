@@ -1,79 +1,92 @@
 import sys
-
-FAIL = 0
-SUCCESS = 1
-NOTHING = 2
-
-result = 11
-N, M = 0, 0
-
-def move(board):
-    move_result = NOTHING
-    for y in range(1, len(board) - 1):
-        x = 1
-        while x < len(board[y]) - 1:
-            if board[y][x] == 'R' or board[y][x] == 'B':
-                ball = board[y][x]
-                board[y][x] = '.'
-                for i in range(x - 1, -1, -1):
-                    if board[y][i] == '#':
-                        board[y][i + 1] = ball
-                        break
-
-                    elif board[y][i] == 'O':
-                        if ball ==  'R':
-                            move_result = SUCCESS
-                        else:
-                            return FAIL
-                        break
-
-                    elif board[y][i] == 'R' or board[y][i] == 'B':
-                        board[y][i + 1] = ball
-                        break
-            x += 1
-
-    return move_result
+from collections import deque
 
 
-def rotate(arr):
-    list_of_tuples = zip(*arr[::-1])
-    return [list(e) for e in list_of_tuples]
+VECTOR = (
+    (1, 0),
+    (-1, 0),
+    (0, 1),
+    (0, -1)
+)
 
-def bt(board, n):
-    global result
+N, M = map(int, sys.stdin.readline().split())
+board = [list(sys.stdin.readline().rstrip()) for _ in range(N)]
+visited = [[[[False for _ in range(M)] for _ in range(N)] for _ in range(M)] for _ in range(N)] # visited[ry][rx][by][bx]
 
-    move_result = move(board)
-    if move_result == SUCCESS:
-        result = min(result, n)
-        return
-    elif move_result == FAIL:
-        return
+def move(rx, ry, bx, by, vx, vy):
+    m_rx, m_ry, m_bx, m_by = rx, ry, bx, by
 
-    if n == 10:
-        return
+    while board[m_ry][m_rx] != '#' and board[m_ry][m_rx] != 'O':
+        m_rx += vx
+        m_ry += vy
 
-    rotated_boards = [board]
-    for _ in range(3):
-        board = rotate(board)
-        rotated_boards.append(board)
+    if board[m_ry][m_rx] == '#':
+        m_rx -= vx
+        m_ry -= vy
 
-    for rotated_board in rotated_boards:
-        bt(rotated_board, n + 1)
+    while board[m_by][m_bx] != '#' and board[m_by][m_bx] != 'O':
+        m_bx += vx
+        m_by += vy
 
+    if board[m_by][m_bx] == '#':
+        m_bx -= vx
+        m_by -= vy
+
+    if m_rx == m_bx and m_ry == m_by:
+        if board[m_ry][m_rx] == 'O':
+            return m_rx, m_ry, m_bx, m_by
+
+        if vx == -1:
+            return (m_rx, m_ry, m_bx - vx, m_by) if rx < bx else (m_rx - vx, m_ry, m_bx, m_by)
+
+        elif vx == 1:
+            return (m_rx, m_ry, m_bx - vx, m_by) if rx > bx else (m_rx - vx, m_ry, m_bx , m_by)
+
+        elif vy == -1:
+            return (m_rx, m_ry, m_bx, m_by - vy) if ry < by else (m_rx, m_ry - vy, m_bx, m_by)
+
+        elif vy == 1:
+            return (m_rx, m_ry, m_bx, m_by - vy) if ry > by else (m_rx, m_ry - vy, m_bx, m_by)
+
+    return m_rx, m_ry, m_bx, m_by
+
+
+
+def bfs(rx, ry, bx, by):
+    q = deque([(rx, ry, bx, by, 0)])
+    visited[ry][rx][by][bx] = True
+    while q:
+        rx, ry, bx, by, n = q.popleft()
+        for vx, vy in VECTOR:
+            m_rx, m_ry, m_bx, m_by = move(rx, ry, bx, by, vx, vy)
+            if visited[m_ry][m_rx][m_by][m_bx]:
+                continue
+
+            if board[m_ry][m_rx] == 'O' and board[m_by][m_bx] == 'O':
+                continue
+
+            elif board[m_ry][m_rx] == 'O':
+                return n + 1
+
+            else:
+                if n + 1 < 10:
+                    q.append((m_rx, m_ry, m_bx, m_by, n + 1))
+                    visited[m_ry][m_rx][m_by][m_bx] = True
+
+    return -1
 
 def solution():
-    global N, M
-    N, M = map(int, sys.stdin.readline().split())
-    board = [list(sys.stdin.readline().rstrip()) for _ in range(N)]
+    rx, ry, bx, by = 0, 0, 0, 0
+    for y in range(N):
+        for x in range(M):
+            if board[y][x] == 'R':
+                rx, ry = x, y
+            elif board[y][x] == 'B':
+                bx, by = x, y
 
-    rotated_boards = [board]
-    for _ in range(3):
-        board = rotate(board)
-        rotated_boards.append(board)
+    board[ry][rx] = '.'
+    board[by][bx] = '.'
 
-    for rotated_board in rotated_boards:
-        bt(rotated_board, 1)
-
-    print(result if result != 11 else -1)
+    print(bfs(rx, ry, bx, by))
 
 solution()
