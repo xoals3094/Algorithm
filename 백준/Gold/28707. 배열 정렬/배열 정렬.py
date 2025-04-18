@@ -5,7 +5,7 @@ from collections import defaultdict
 INF = 1e9
 
 N = int(sys.stdin.readline().rstrip())
-A = list(map(lambda x: int(x) - 1, sys.stdin.readline().rstrip().split()))
+A = ''.join(list(map(lambda x: str(int(x) - 1),sys.stdin.readline().rstrip().split())))
 M = int(sys.stdin.readline().rstrip())
 
 commands = []
@@ -17,22 +17,25 @@ costs = defaultdict(lambda: INF)
 def dijkstra(start_arr):
     q = []
     heapq.heappush(q, (0, start_arr))
-    costs[''.join(list(map(str, start_arr)))] = 0
+    costs[start_arr] = 0
 
     while q:
         cost, arr = heapq.heappop(q)
-        if costs[''.join(list(map(str, arr)))] < cost:
+        if costs[arr] < cost:
             continue
 
         for l, r, c in commands:
-            next = arr.copy()
+            next = list(arr)
             next[l], next[r] = next[r], next[l]
-            if costs[''.join(list(map(str, arr)))] + c < costs[''.join(list(map(str, next)))]:
+            next = ''.join(next)
+            if costs[arr] + c < costs[next]:
                 heapq.heappush(q, (cost + c, next))
-                costs[''.join(list(map(str, next)))] = costs[''.join(list(map(str, arr)))] + c
+                costs[next] = costs[arr] + c
 
+    start_arr = list(start_arr)
     start_arr.sort()
-    return costs[''.join(list(map(str, start_arr)))]
+    start_arr = ''.join(start_arr)
+    return costs[start_arr]
 
 result = dijkstra(A)
 print(result if result != INF else -1)
