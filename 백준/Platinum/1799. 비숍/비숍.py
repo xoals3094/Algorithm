@@ -42,7 +42,8 @@ spaces = [get_space(i) for i in range(N * 2 - 1)]
 count = 0
 def bt(h, n):
     global count
-    if (N * 2 - 2) - h + n <= count - 1:
+    if (N * 2 - 2) - h + n + 1 <= count:
+
         return
 
     if h > N * 2 - 2:
