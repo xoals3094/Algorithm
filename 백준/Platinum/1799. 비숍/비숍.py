@@ -2,6 +2,8 @@ import sys
 
 N = int(sys.stdin.readline())
 board = [sys.stdin.readline().rstrip().split() for _ in range(N)]
+
+
 def promise(x, y):
     # left
     i = 0
@@ -37,30 +39,24 @@ def get_space(h):
 
     return space
 
+
 spaces = [get_space(i) for i in range(N * 2 - 1)]
-
-count = 0
-def bt(h, n):
-    global count
-    if (N * 2 - 2) - h + n + 1 <= count:
-
-        return
-
+def bt(h, n, count):
     if h > N * 2 - 2:
-        count = max(count, n)
-        return
+        return max(count, n)
 
     # 놓는 선택
     for x, y in spaces[h]:
         if promise(x, y):
             board[y][x] = 'B'
-            bt(h + 1, n + 1)
+            count = bt(h + 2, n + 1, count)
             board[y][x] = '1'
-    bt(h + 1, n) # 놓지 않는 선택
-if N != 1:
-    bt(0, 0)
-else:
-    if board[0][0] == '1':
-        count += 1
+    count = bt(h + 2, n, count) # 놓지 않는 선택
+    return count
 
-print(count)
+
+def solution():
+    total = bt(0, 0, 0) + bt(1, 0, 0)
+    return total
+
+print(solution())
