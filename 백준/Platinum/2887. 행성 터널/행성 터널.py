@@ -21,19 +21,16 @@ planet_by_x.sort()
 planet_by_y.sort()
 planet_by_z.sort()
 
-def order(a, b):
-    return (a, b) if a < b else (b, a)
-
-distance = defaultdict(lambda :1e9)
+q = []
 for i in range(N - 1):
-    a, b = order(planet_by_x[i][NUMBER], planet_by_x[i + 1][NUMBER])
-    distance[(a, b)] = min(distance[(a, b)], abs(planet_by_x[i][COOR] - planet_by_x[i + 1][COOR]))
+    a, b = planet_by_x[i][NUMBER], planet_by_x[i + 1][NUMBER]
+    heapq.heappush(q, (abs(planet_by_x[i][COOR] - planet_by_x[i + 1][COOR]), a, b))
 
-    a, b = order(planet_by_y[i][NUMBER], planet_by_y[i + 1][NUMBER])
-    distance[(a, b)] = min(distance[(a, b)], abs(planet_by_y[i][COOR] - planet_by_y[i + 1][COOR]))
+    a, b = planet_by_y[i][NUMBER], planet_by_y[i + 1][NUMBER]
+    heapq.heappush(q, (abs(planet_by_y[i][COOR] - planet_by_y[i + 1][COOR]), a, b))
 
-    a, b = order(planet_by_z[i][NUMBER], planet_by_z[i + 1][NUMBER])
-    distance[(a, b)] = min(distance[(a, b)], abs(planet_by_z[i][COOR] - planet_by_z[i + 1][COOR]))
+    a, b = planet_by_z[i][NUMBER], planet_by_z[i + 1][NUMBER]
+    heapq.heappush(q, (abs(planet_by_z[i][COOR] - planet_by_z[i + 1][COOR]), a, b))
 
 parents = [x for x in range(N)]
 def find(x):
@@ -53,11 +50,6 @@ def union(a, b):
 
 def mst():
     total = 0
-    q = []
-    for planet, d in distance.items():
-        a, b = planet
-        heapq.heappush(q, (d, a, b))
-
     while q:
         d, a, b = heapq.heappop(q)
         if find(a) == find(b):
