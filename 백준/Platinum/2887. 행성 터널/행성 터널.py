@@ -1,6 +1,4 @@
 import sys
-from collections import defaultdict
-import heapq
 
 COOR = 0
 NUMBER = 1
@@ -21,17 +19,18 @@ planet_by_x.sort()
 planet_by_y.sort()
 planet_by_z.sort()
 
-q = []
+edges = []
 for i in range(N - 1):
     a, b = planet_by_x[i][NUMBER], planet_by_x[i + 1][NUMBER]
-    heapq.heappush(q, (abs(planet_by_x[i][COOR] - planet_by_x[i + 1][COOR]), a, b))
+    edges.append((abs(planet_by_x[i][COOR] - planet_by_x[i + 1][COOR]), a, b))
 
     a, b = planet_by_y[i][NUMBER], planet_by_y[i + 1][NUMBER]
-    heapq.heappush(q, (abs(planet_by_y[i][COOR] - planet_by_y[i + 1][COOR]), a, b))
+    edges.append((abs(planet_by_y[i][COOR] - planet_by_y[i + 1][COOR]), a, b))
 
     a, b = planet_by_z[i][NUMBER], planet_by_z[i + 1][NUMBER]
-    heapq.heappush(q, (abs(planet_by_z[i][COOR] - planet_by_z[i + 1][COOR]), a, b))
+    edges.append((abs(planet_by_z[i][COOR] - planet_by_z[i + 1][COOR]), a, b))
 
+edges.sort()
 parents = [x for x in range(N)]
 def find(x):
     if parents[x] == x:
@@ -51,8 +50,10 @@ def union(a, b):
 def mst():
     total = 0
     cnt = N - 1
-    while cnt:
-        d, a, b = heapq.heappop(q)
+    for d, a, b in edges:
+        if cnt == 0:
+            break
+
         if find(a) == find(b):
             continue
 
