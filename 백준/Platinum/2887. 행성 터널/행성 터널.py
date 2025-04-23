@@ -50,12 +50,14 @@ def union(a, b):
 
 def mst():
     total = 0
-    while q:
+    cnt = N - 1
+    while cnt:
         d, a, b = heapq.heappop(q)
         if find(a) == find(b):
             continue
 
         union(a, b)
+        cnt -= 1
         total += d
 
     return total
