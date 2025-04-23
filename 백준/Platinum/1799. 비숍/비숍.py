@@ -45,6 +45,13 @@ def bt(h, n, count):
     if h > N * 2 - 2:
         return max(count, n)
 
+    if h % 2 == 0:
+        if N - h // 2 + n + 1 <= count:
+            return count
+    else:
+        if N - 1 - (h - 1) // 2 + n + 1 <= count:
+            return count
+
     # 놓는 선택
     for x, y in spaces[h]:
         if promise(x, y):
